@@ -1,5 +1,7 @@
 import 'package:blog_app/Authentication.dart';
+import 'package:blog_app/DialogBox.dart';
 import 'package:flutter/material.dart';
+import 'DialogBox.dart';
 
 class LoginRegisterPage extends StatefulWidget{
   LoginRegisterPage({
@@ -22,6 +24,8 @@ enum FormType{
 }
 
 class _LoginRegisterState extends  State<LoginRegisterPage>{
+  DialogBox dialogBox = new DialogBox();
+
 final formKey = new GlobalKey<FormState>();
 FormType _formType=FormType.login;
 String _email="";
@@ -41,17 +45,20 @@ void validateAndSubmit() async{
     try{
       if(_formType == FormType.login){
         String userId=await widget.auth.SignIn(_email, _password);
-        print("Login userId="+ userId);
+           dialogBox.information(context, "Congratulations ", "your are logged in successfully");
+              print("Login userId="+ userId);
 
       }
       else{
          String userId=await widget.auth.SignUp(_email, _password);
+         dialogBox.information(context, "Congratulations ", "your account has been created successfully");
         print("Register userId="+ userId);
       }
       widget.onSignedIn();
 
     }
     catch(e){
+      dialogBox.information(context, "Error = ", e.toString());
       print("Error ="+e.toString());
     }
   }
@@ -141,7 +148,7 @@ child: new Text("Login", style: new TextStyle(fontSize: 20.0)),
 color: Colors.purple,
 textColor: Colors.white,
 
-onPressed: validateAndSave,
+onPressed: validateAndSubmit,
     ),
      new FlatButton(
 child: new Text("Not have an Account? Create Account?", style: new TextStyle(fontSize: 20.0)),
