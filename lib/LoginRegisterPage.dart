@@ -100,8 +100,8 @@ List<Widget> createInputs(){
 
     new TextFormField(
       decoration: new InputDecoration(labelText: 'Email'),
-      validator: (vale){
-        return vale.isEmpty ? 'Email is required.' : null;
+      validator: (value){
+        return value.isEmpty ? 'Email is required.' : null;
       },
       onSaved: (value){
         return _email=value;
@@ -111,8 +111,8 @@ List<Widget> createInputs(){
     new TextFormField(
       decoration: new InputDecoration(labelText: 'Password'),
       obscureText: true,
-      validator: (vale){
-        return vale.isEmpty ? 'Password is required.' : null;
+      validator: (value){
+        return value.isEmpty ? 'Password is required.' : null;
       },
       onSaved: (value){
         return _password=value;
@@ -134,7 +134,7 @@ Widget logo(){
 }
 
 List<Widget> createButtons(){
- if(FormType == FormType.register){
+ if(_formType == FormType.login){
     return[
     new RaisedButton(
 child: new Text("Login", style: new TextStyle(fontSize: 20.0)),
