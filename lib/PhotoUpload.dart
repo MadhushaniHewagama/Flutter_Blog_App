@@ -16,7 +16,8 @@ class UploadPhotoPage extends StatefulWidget{
 
 class _UploadPhotoPageState extends State<UploadPhotoPage>{
   File _sampleImage;
-  String _myValue;
+  String _description;
+  String _date;
   String url;
   final formKey =new GlobalKey<FormState>();
 
@@ -54,20 +55,12 @@ void uploadStatusImage() async{
   }
 }
 void saveToDatabase(url){
-  var dbTimeKey = new DateTime.now();
-  var formatDate =new DateFormat('MMM d, yyy');
-  var formatTime =new DateFormat('EEE, hh:mm aaa');
-
-  String date=formatDate.format(dbTimeKey);
-  String time=formatTime.format(dbTimeKey);
-
   DatabaseReference ref= FirebaseDatabase.instance.reference();
 
   var data ={
     "image": url,
-    "description":_myValue,
-    "date": date,
-    "time": time,
+    "description":_description,
+    "date": _date,
   };
 ref.child("Posts").push().set(data);
 
@@ -113,10 +106,19 @@ void goToHomePage(){
             TextFormField(
               decoration: new InputDecoration(labelText: 'Description'),
               validator: (value){
-                return value.isEmpty ? 'Blog Description is required' : null;
+                return value.isEmpty ? 'Description is required' : null;
               },
               onSaved: (value){
-               return _myValue=value;
+               return _description=value;
+              },
+            ),
+            TextFormField(
+              decoration: new InputDecoration(labelText: 'Date'),
+              validator: (value){
+                return value.isEmpty ? 'Date is required' : null;
+              },
+              onSaved: (value){
+               return _date=value;
               },
             ),
             SizedBox(height: 15.0,),

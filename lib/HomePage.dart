@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage>{
             DATA[individualKey]['image'],
             DATA[individualKey]['description'],
             DATA[individualKey]['date'],
-            DATA[individualKey]['time'],
+      
           );
           postsList.add(posts);
         }
@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage>{
         child: postsList.length == 0 ? new Text("No Blog Post available"): new ListView.builder(
           itemCount: postsList.length,
           itemBuilder: (_,index){
-            return PostsUI(postsList[index].image, postsList[index].description, postsList[index].date, postsList[index].time);
+            return PostsUI(postsList[index].image, postsList[index].description, postsList[index].date);
           }
           
         ),
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage>{
       ),
     );
   }
-  Widget PostsUI(String image,String description, String date,String time){
+  Widget PostsUI(String image,String description, String date){
     return new Card(
       elevation: 10.0,
       margin: EdgeInsets.all(14.0),
@@ -127,11 +127,7 @@ class _HomePageState extends State<HomePage>{
             textAlign: TextAlign.center,
           ),
 
-          new Text(
-            time,
-            style: Theme.of(context).textTheme.subtitle,
-            textAlign: TextAlign.center,
-          )
+          
             ],
             ),
             SizedBox(height: 10.0,),
