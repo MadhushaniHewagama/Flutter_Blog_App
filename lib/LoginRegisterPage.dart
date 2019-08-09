@@ -1,8 +1,21 @@
+import 'package:blog_app/Authentication.dart';
+import 'package:blog_app/DialogBox.dart';
 import 'package:flutter/material.dart';
+import 'DialogBox.dart';
+
 class LoginRegisterPage extends StatefulWidget{
+  LoginRegisterPage({
+    this.auth,
+    this.onSignedIn,
+  });
+    final AuthImplemetaion auth;
+    final VoidCallback onSignedIn;
   State<StatefulWidget> createState(){
     return _LoginRegisterState();
   }
+
+
+
 }
 
 enum FormType{
@@ -11,6 +24,8 @@ enum FormType{
 }
 
 class _LoginRegisterState extends  State<LoginRegisterPage>{
+  DialogBox dialogBox = new DialogBox();
+
 final formKey = new GlobalKey<FormState>();
 FormType _formType=FormType.login;
 String _email="";
@@ -24,6 +39,30 @@ bool validateAndSave(){
   }else{
     return false;
   }
+}
+void validateAndSubmit() async{
+  if(validateAndSave()){
+    try{
+      if(_formType == FormType.login){
+        String userId=await widget.auth.SignIn(_email, _password);
+           dialogBox.information(context, "Congratulations ", "your are logged in successfully");
+              print("Login userId="+ userId);
+
+      }
+      else{
+         String userId=await widget.auth.SignUp(_email, _password);
+         dialogBox.information(context, "Congratulations ", "your account has been created successfully");
+        print("Register userId="+ userId);
+      }
+      widget.onSignedIn();
+
+    }
+    catch(e){
+      dialogBox.information(context, "Error = ", e.toString());
+      print("Error ="+e.toString());
+    }
+  }
+
 }
 
 void moveToRegister(){
@@ -68,8 +107,8 @@ List<Widget> createInputs(){
 
     new TextFormField(
       decoration: new InputDecoration(labelText: 'Email'),
-      validator: (vale){
-        return vale.isEmpty ? 'Email is required.' : null;
+      validator: (value){
+        return value.isEmpty ? 'Email is required.' : null;
       },
       onSaved: (value){
         return _email=value;
@@ -79,8 +118,8 @@ List<Widget> createInputs(){
     new TextFormField(
       decoration: new InputDecoration(labelText: 'Password'),
       obscureText: true,
-      validator: (vale){
-        return vale.isEmpty ? 'Password is required.' : null;
+      validator: (value){
+        return value.isEmpty ? 'Password is required.' : null;
       },
       onSaved: (value){
         return _password=value;
@@ -102,14 +141,14 @@ Widget logo(){
 }
 
 List<Widget> createButtons(){
- if(FormType == FormType.register){
+ if(_formType == FormType.login){
     return[
     new RaisedButton(
 child: new Text("Login", style: new TextStyle(fontSize: 20.0)),
 color: Colors.purple,
 textColor: Colors.white,
 
-onPressed: validateAndSave,
+onPressed: validateAndSubmit,
     ),
      new FlatButton(
 child: new Text("Not have an Account? Create Account?", style: new TextStyle(fontSize: 20.0)),
@@ -126,7 +165,7 @@ child: new Text("Create Account", style: new TextStyle(fontSize: 20.0)),
 color: Colors.purple,
 textColor: Colors.white,
 
-onPressed: validateAndSave,
+onPressed: validateAndSubmit,
     ),
      new FlatButton(
 child: new Text("Already have an Account? Login", style: new TextStyle(fontSize: 20.0)),
