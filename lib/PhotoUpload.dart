@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'HomePage.dart';
+
 
 
 class UploadPhotoPage extends StatefulWidget{
@@ -15,6 +17,7 @@ class UploadPhotoPage extends StatefulWidget{
 class _UploadPhotoPageState extends State<UploadPhotoPage>{
   File _sampleImage;
   String _myValue;
+  String url;
   final formKey =new GlobalKey<FormState>();
 
 
@@ -35,7 +38,50 @@ bool validateAndSave(){
   }
 }
 
+void uploadStatusImage() async{
+  if(validateAndSave()){
+    final StorageReference postImageRef = FirebaseStorage.instance.ref().child("Post Image");
+    var timeKey = new DateTime.now();
 
+    final StorageUploadTask uploadTask = postImageRef.child(timeKey.toString() + ".jpg").putFile(_sampleImage);
+
+    var ImageUrl =  await (await uploadTask.onComplete).ref.getDownloadURL();
+    url=ImageUrl.toString();
+    print("Image Url =" + url);
+    goToHomePage();
+    saveToDatabase(url);
+
+  }
+}
+void saveToDatabase(url){
+  var dbTimeKey = new DateTime.now();
+  var formatDate =new DateFormat('MMM d, yyy');
+  var formatTime =new DateFormat('EEE, hh:mm aaa');
+
+  String date=formatDate.format(dbTimeKey);
+  String time=formatTime.format(dbTimeKey);
+
+  DatabaseReference ref= FirebaseDatabase.instance.reference();
+
+  var data ={
+    "image": url,
+    "description":_myValue,
+    "date": date,
+    "time": time,
+  };
+ref.child("Posts").push().set(data);
+
+}
+
+void goToHomePage(){
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context){
+      return new HomePage();
+
+    })
+  );
+}
 
 
   Widget build(BuildContext context){
@@ -80,7 +126,7 @@ bool validateAndSave(){
                 textColor: Colors.white,
                 color: Colors.purple,
 
-                onPressed: validateAndSave,
+                onPressed: uploadStatusImage,
             )
 
 
